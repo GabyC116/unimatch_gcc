@@ -1,42 +1,58 @@
 ﻿import "package:flutter/material.dart";
+import "package:unimatch_gcc/screens/profile_screen.dart";
+import "package:unimatch_gcc/ui/swipe_screen.dart";
+import "package:unimatch_gcc/data/mock_profiles.dart";
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+  
+  final List<Widget> _screens = [
+    SwipeScreen(profiles: mockProfiles),
+    const Center(child: Text("Matches - Prximamente", style: TextStyle(fontSize: 20))),
+    const ProfileScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("UNIMATCH"),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFFD32F2F),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.people, size: 100, color: Colors.blue),
-            const SizedBox(height: 20),
-            const Text(
-              "Conecta con compañeros",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            const Text("Encuentra tu match perfecto"),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                // Navegar a login
-                Navigator.pushNamed(context, "/login");
-              },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                child: Text("COMENZAR", style: TextStyle(fontSize: 18)),
-              ),
-            ),
-          ],
-        ),
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.explore),
+            label: "Descubrir",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: "Matches",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Perfil",
+          ),
+        ],
       ),
     );
   }
 }
+
+
+

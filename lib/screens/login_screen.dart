@@ -17,7 +17,7 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Icono
-            Icon(Icons.lock_person, size: 80, color: Colors.blue[700]),
+            Icon(Icons.lock_person, size: 80, color: const Color(0xFFD32F2F)),
             const SizedBox(height: 20),
             
             // Título
@@ -84,3 +84,4 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
+
