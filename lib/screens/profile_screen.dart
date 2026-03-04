@@ -1,189 +1,226 @@
-﻿import "package:flutter/material.dart";
+﻿import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:unimatch_gcc/data/mock_profiles.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Lista de fotos simuladas (como en Tinder)
-    final List<String> profilePhotos = [
-      "Foto principal",
-      "Foto 2", 
-      "Foto 3"
-    ];
+    // Usar el primer perfil como ejemplo (o el del usuario actual)
+    final profile = mockProfiles[0];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("MI PERFIL"),
-        backgroundColor: Colors.blue[800],
-        centerTitle: true,
+        title: const Text('Mi Perfil'),
+        backgroundColor: Colors.red.shade700,
+        foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              print("Editar perfil");
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.settings),
+            onSelected: (value) async {
+              if (value == 'logout') {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacementNamed(context, '/login');
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'logout',
+                  child: Row(
+                    children: [
+                      Icon(Icons.logout, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Cerrar sesión'),
+                    ],
+                  ),
+                ),
+              ];
             },
           ),
         ],
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // CARRUSEL DE FOTOS (como Tinder)
-            SizedBox(
-              height: 300,
-              child: PageView.builder(
-                itemCount: profilePhotos.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.blue[100],
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+            // Foto de perfil
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.grey.shade200,
+                    backgroundImage: profile.photoUrl != null
+                        ? NetworkImage(profile.photoUrl!)
+                        : null,
+                    child: profile.photoUrl == null
+                        ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                        : null,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.edit,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.photo,
-                          size: 100,
-                          color: Colors.blue[700],
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          profilePhotos[index],
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[900],
-                          ),
-                        ),
-                        if (index == 0)
-                          const Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child: Chip(
-                              label: Text("FOTO PRINCIPAL"),
-                              backgroundColor: Colors.amber,
-                            ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
+                  ),
+                ],
               ),
             ),
-            
-            // Indicador de fotos (puntos como Tinder)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                profilePhotos.length,
-                (index) => Container(
-                  width: 10,
-                  height: 10,
-                  margin: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: index == 0 ? Colors.blue : Colors.grey[300],
-                  ),
+
+            const SizedBox(height: 20),
+
+            // Nombre
+            Text(
+              profile.name,
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 8),
+
+            // Edad
+            Text(
+              '${profile.age} años',
+              style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Tarjeta de información académica
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    _buildInfoRow(Icons.school, 'Carrera', profile.career),
+                    const Divider(),
+                    _buildInfoRow(
+                      Icons.location_city,
+                      'Universidad',
+                      profile.university,
+                    ),
+                    const Divider(),
+                    _buildInfoRow(Icons.star, 'GPA', profile.gpa.toString()),
+                  ],
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
-            // Botón para cambiar/más fotos
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      print("Agregar más fotos");
-                    },
-                    icon: const Icon(Icons.add_a_photo),
-                    label: const Text("Agregar fotos"),
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      print("Editar fotos");
-                    },
-                    icon: const Icon(Icons.edit),
-                    label: const Text("Editar"),
-                  ),
-                ],
-              ),
+
+            // Materias
+            _buildSection(
+              title: '📚 Materias',
+              children: profile.subjects
+                  .map(
+                    (subject) => Chip(
+                      label: Text(subject),
+                      backgroundColor: Colors.blue.shade50,
+                    ),
+                  )
+                  .toList(),
             ),
-            
+
             const SizedBox(height: 20),
-            
-            // Resto de la información del perfil (tu código actual)
-            // ... [tu código actual de perfil] ...
-            
+
+            // Intereses
+            _buildSection(
+              title: '⭐ Intereses',
+              children: profile.interests
+                  .map(
+                    (interest) => Chip(
+                      label: Text(interest),
+                      backgroundColor: Colors.green.shade50,
+                    ),
+                  )
+                  .toList(),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Bio
             Container(
-              padding: const EdgeInsets.all(20),
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.purple.shade50,
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Gabriela Castillo",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    '📝 Sobre mí:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "Ingeniería de Sistemas - 8° Semestre",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    "Universidad Nacional",
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Estadísticas
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildStatItem("24", "Matches"),
-                      _buildStatItem("12", "Chats"),
-                      _buildStatItem("3", "Fotos"),
-                    ],
-                  ),
+                  const SizedBox(height: 8),
+                  Text(profile.bio, style: const TextStyle(fontSize: 16)),
                 ],
               ),
             ),
+
+            const SizedBox(height: 30),
           ],
         ),
       ),
     );
   }
-  
-  Widget _buildStatItem(String value, String label) {
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.red.shade700),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              ),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required List<Widget> children,
+  }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          value,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
-          ),
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
+        const SizedBox(height: 10),
+        Wrap(spacing: 8, runSpacing: 8, children: children),
       ],
     );
   }

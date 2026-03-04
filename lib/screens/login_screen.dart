@@ -7,9 +7,17 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("INICIAR SESIÓN"),
-        backgroundColor: Colors.blue[800],
-        centerTitle: true,
+        title: const Text('Login'),
+        backgroundColor: Colors.red.shade700, // o el color que uses
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/home');
+            },
+            tooltip: 'Ir al inicio',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -19,20 +27,20 @@ class LoginScreen extends StatelessWidget {
             // Icono
             Icon(Icons.lock_person, size: 80, color: const Color(0xFFD32F2F)),
             const SizedBox(height: 20),
-            
+
             // Título
             const Text(
               "Bienvenido de nuevo",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            
+
             const Text(
               "Ingresa a tu cuenta Unimatch",
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 40),
-            
+
             // Campo Email
             TextField(
               decoration: InputDecoration(
@@ -42,7 +50,7 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // Campo Contraseña
             TextField(
               obscureText: true,
@@ -53,7 +61,7 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-            
+
             // Botón Login
             ElevatedButton(
               onPressed: () {
@@ -66,7 +74,7 @@ class LoginScreen extends StatelessWidget {
               child: const Text("INICIAR SESIÓN"),
             ),
             const SizedBox(height: 20),
-            
+
             // Enlace a registro - ESTE ES EL BOTÓN IMPORTANTE
             TextButton(
               onPressed: () {
@@ -84,4 +92,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-

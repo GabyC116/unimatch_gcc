@@ -1,4 +1,4 @@
-class AcademicProfile {
+﻿class AcademicProfile {
   final String id;
   final String name;
   final String photoUrl;
@@ -11,6 +11,7 @@ class AcademicProfile {
   final int age;
   final String location;
   final double distanceKm;
+  final int semester; // ← CAMPO NUEVO
 
   AcademicProfile({
     required this.id,
@@ -25,6 +26,7 @@ class AcademicProfile {
     required this.age,
     required this.location,
     required this.distanceKm,
+    this.semester = 1, // ← Valor por defecto
   });
 
   Map<String, dynamic> toMap() {
@@ -41,6 +43,7 @@ class AcademicProfile {
       'age': age,
       'location': location,
       'distanceKm': distanceKm,
+      'semester': semester, // ← Incluido
     };
   }
 
@@ -58,6 +61,7 @@ class AcademicProfile {
       age: map['age']?.toInt() ?? 0,
       location: map['location'] ?? '',
       distanceKm: map['distanceKm']?.toDouble() ?? 0.0,
+      semester: map['semester']?.toInt() ?? 1, // ← Incluido
     );
   }
 }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "173761637273",
+    "project_id": "unimatchtest",
+    "storage_bucket": "unimatchtest.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:173761637273:android:e122cee1c1eabf0514c108",
+        "android_client_info": {
+          "package_name": "com.example.unimatch_gcc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1JMAmA-kWE99_jYAkJiGvuRrKdhvMGKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:173761637273:android:657b26b9569b25f814c108",
+        "android_client_info": {
+          "package_name": "com.gcc.unimatch.unimatch_gcc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1JMAmA-kWE99_jYAkJiGvuRrKdhvMGKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

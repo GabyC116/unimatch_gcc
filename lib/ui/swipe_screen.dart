@@ -37,7 +37,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     if (widget.profiles.isEmpty) {
       return const Center(
         child: Text(
-          'No hay perfiles disponibles\nVuelve más tarde',
+          'No hay perfiles disponibles',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 18, color: Colors.grey),
         ),
@@ -50,27 +50,25 @@ class _SwipeScreenState extends State<SwipeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Descubrir'),
-        backgroundColor: const Color(0xFFD32F2F),
+        backgroundColor: Colors.red.shade700,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: Text(
               '${_currentIndex + 1}/${widget.profiles.length}',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         ],
       ),
       body: Column(
         children: [
-          // Barra de progreso
           LinearProgressIndicator(
             value: progress,
-            backgroundColor: Colors.grey[200],
-            color: const Color(0xFFD32F2F),
+            backgroundColor: Colors.grey.shade200,
+            color: Colors.red,
             minHeight: 3,
           ),
-          
           Expanded(
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
@@ -80,9 +78,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
               },
               onHorizontalDragEnd: (details) {
                 if (_dragPosition > 100) {
-                  _previousProfile(); // Deslizar derecha
+                  _previousProfile();
                 } else if (_dragPosition < -100) {
-                  _nextProfile(); // Deslizar izquierda
+                  _nextProfile();
                 }
                 setState(() {
                   _dragPosition = 0.0;
@@ -90,45 +88,24 @@ class _SwipeScreenState extends State<SwipeScreen> {
               },
               child: Transform.translate(
                 offset: Offset(_dragPosition, 0),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.all(20),
-                  child: _buildProfileCard(profile),
-                ),
+                child: _buildProfileCard(profile),
               ),
             ),
           ),
-          
-          // Botones de acción
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Botón rechazar
                 _buildActionButton(
                   icon: Icons.close,
-                  color: const Color(0xFFD32F2F),
+                  color: Colors.red,
                   onTap: _nextProfile,
-                  size: 60,
                 ),
-                
-                // Botón like
                 _buildActionButton(
                   icon: Icons.favorite,
-                  color: const Color(0xFF1976D2),
+                  color: Colors.green,
                   onTap: _nextProfile,
-                  size: 70,
-                ),
-                
-                // Botón ver detalles
-                _buildActionButton(
-                  icon: Icons.info,
-                  color: const Color(0xFFD32F2F),
-                  onTap: () {
-                    _showProfileDetails(context, profile);
-                  },
-                  size: 60,
                 ),
               ],
             ),
@@ -138,469 +115,116 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-    Widget _buildProfileCard(AcademicProfile profile) {
+  Widget _buildProfileCard(AcademicProfile profile) {
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          // Foto de perfil
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: Container(
-              height: 280,
-              width: double.infinity,
-              color: const Color(0xFFFFEBEE),
-              child: profile.photoUrl != null && profile.photoUrl!.isNotEmpty
-                  ? Image.network(
-                      profile.photoUrl!,
-                      fit: BoxFit.cover,
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.person,
-                          size: 100,
-                          color: const Color(0xFFEF9A9A),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          profile.name,
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: const Color(0xFFD32F2F),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Container(
+                height: 280,
+                width: double.infinity,
+                color: Colors.grey.shade200,
+                child: profile.photoUrl != null && profile.photoUrl!.isNotEmpty
+                    ? Image.network(profile.photoUrl!, fit: BoxFit.cover)
+                    : const Icon(Icons.person, size: 100, color: Colors.grey),
+              ),
             ),
-          ),
-          
-          // Información DEBAJO de la imagen
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Nombre y edad
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      profile.name,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD32F2F),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${profile.age} años',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          profile.name,
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 8),
-                
-                // Carrera y universidad
-                Text(
-                  '🎓 ${profile.career}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: const Color(0xFFD32F2F),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                
-                const SizedBox(height: 5),
-                
-                Text(
-                  '🏛️ ${profile.university}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.shade700,
-                  ),
-                ),
-                
-                const SizedBox(height: 20),
-                
-                // Divider
-                Divider(color: Colors.grey.shade300),
-                
-                const SizedBox(height: 15),
-                
-                // Materias actuales
-                const Text(
-                  '📚 Materias este semestre:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: profile.subjects.map((subject) => Chip(
-                    label: Text(subject),
-                    backgroundColor: const Color(0xFFFFEBEE),
-                    labelStyle: const TextStyle(fontSize: 13),
-                  )).toList(),
-                ),
-                
-                const SizedBox(height: 20),
-                
-                // Áreas destacadas
-                const Text(
-                  '⭐ Destacado en:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: profile.interests.map((interest) => Chip(
-                    label: Text(interest),
-                    backgroundColor: const Color(0xFFE3F2FD),
-                    labelStyle: const TextStyle(fontSize: 13),
-                  )).toList(),
-                ),
-                
-                const SizedBox(height: 20),
-                
-                // Actividades/Curiosidades (en un recuadro especial)
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE3F2FD),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFF90CAF9)),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.emoji_objects, color: const Color(0xFF1976D2), size: 24),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Sobre mí:',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF1976D2),
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              profile.bio,
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ],
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${profile.age} años',
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-    double size = 60,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 10,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: size * 0.5,
-        ),
-      ),
-    );
-  }
-
-  void _showProfileDetails(BuildContext context, AcademicProfile profile) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          minChildSize: 0.5,
-          maxChildSize: 0.95,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-              ),
-              child: ListView(
-                controller: scrollController,
-                children: [
-                  // Header con foto
-                  Container(
-                    height: 250,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
-                      image: profile.photoUrl != null && profile.photoUrl!.isNotEmpty
-                          ? DecorationImage(
-                              image: NetworkImage(profile.photoUrl!),
-                              fit: BoxFit.cover,
-                            )
-                          : null,
-                      color: const Color(0xFFFFEBEE),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: 20,
-                          right: 20,
-                          child: IconButton(
-                            icon: const Icon(Icons.close, color: Colors.white),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${profile.career}',
+                    style: TextStyle(fontSize: 18, color: Colors.red.shade700, fontWeight: FontWeight.w600),
                   ),
-                  
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Nombre y edad
-                        Row(
-                          children: [
-                            Text(
-                              profile.name,
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFD32F2F),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Text(
-                                '${profile.age} años',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        
-                        const SizedBox(height: 10),
-                        
-                        // Carrera y universidad
-                        Text(
-                          '${profile.career} • ${profile.university}',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: const Color(0xFFD32F2F),
-                          ),
-                        ),
-                        
-                        const SizedBox(height: 20),
-                        
-                        // Bio completa
-                        const Text(
-                          'Sobre mí:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          profile.bio,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        
-                        const SizedBox(height: 30),
-                        
-                        // Materias actuales
-                        const Text(
-                          '📚 Materias actuales:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: profile.subjects.map((subject) => Chip(
-                            label: Text(subject),
-                            backgroundColor: const Color(0xFFFFCDD2),
-                            labelStyle: TextStyle(fontSize: 14),
-                          )).toList(),
-                        ),
-                        
-                        const SizedBox(height: 30),
-                        
-                        // Áreas destacadas
-                        const Text(
-                          '⭐ Áreas destacadas:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: profile.interests.map((interest) => Chip(
-                            label: Text(interest),
-                            backgroundColor: const Color(0xFFBBDEFB),
-                            labelStyle: TextStyle(fontSize: 14),
-                          )).toList(),
-                        ),
-                        
-                        const SizedBox(height: 30),
-                        
-                        // Estadísticas
-                        const Text(
-                          '📊 Estadísticas:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _buildStatItem(Icons.star, 'GPA', '${profile.gpa}'),
-                            _buildStatItem(Icons.location_on, 'Distancia', '${profile.distanceKm} km'),
-                            _buildStatItem(Icons.school, 'Materias', '${profile.subjects.length}'),
-                            _buildStatItem(Icons.interests, 'Intereses', '${profile.interests.length}'),
-                          ],
-                        ),
-                        
-                        const SizedBox(height: 40),
-                        
-                        // Botones de acción
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                icon: const Icon(Icons.close),
-                                label: const Text('Rechazar'),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: const Color(0xFFD32F2F),
-                                  side: const BorderSide(color: Colors.red),
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  _nextProfile();
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                icon: const Icon(Icons.favorite),
-                                label: const Text('Me interesa'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1976D2),
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  _nextProfile();
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                  Text(
+                    profile.university,
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                  ),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 15),
+                  const Text('📚 Materias:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: profile.subjects.map((subject) => Chip(
+                      label: Text(subject),
+                      backgroundColor: Colors.red.shade50,
+                    )).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('⭐ Destacado en:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: profile.interests.map((interest) => Chip(
+                      label: Text(interest),
+                      backgroundColor: Colors.green.shade50,
+                    )).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.shade50,
+                      borderRadius: BorderRadius.circular(8),
                     ),
+                    child: Text(profile.bio),
                   ),
                 ],
               ),
-            );
-          },
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildStatItem(IconData icon, String title, String value) {
-    return Column(
-      children: [
-        Icon(icon, size: 30, color: const Color(0xFFD32F2F)),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+  Widget _buildActionButton({required IconData icon, required Color color, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
         ),
-        Text(
-          value,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ],
+        child: Icon(icon, color: Colors.white),
+      ),
     );
   }
 }
-
-
-
-
 
 
